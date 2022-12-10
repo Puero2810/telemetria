@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "581657023606",
+    "project_id": "telemetria-75492",
+    "storage_bucket": "telemetria-75492.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:581657023606:android:4138681fe674207611bb57",
+        "android_client_info": {
+          "package_name": "com.example.telemetria"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "581657023606-vuru037o3pei1c2rn019tm9i1plm74cp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.telemetria",
+            "certificate_hash": "25927c53073a6722df469be090bf195d66315dc9"
+          }
+        },
+        {
+          "client_id": "581657023606-niakdt279l0296n7lbgun3qfb00sap2v.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAY6NR1KwhbKGnJxHr3bptHxA7TCzfVmIk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "581657023606-niakdt279l0296n7lbgun3qfb00sap2v.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
