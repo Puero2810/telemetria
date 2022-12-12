@@ -48,21 +48,5 @@ public class login extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
-
-        //FirebaseFirestore db = FirebaseFirestore.getInstance();
-        //db.collection("extintor").document("1").get().addOnSuccessListener(
-        //          new OnSuccessListener<DocumentSnapshot>() {
-        //            @Override
-        //            public void onSuccess(DocumentSnapshot documentSnapshot) {
-        //                if(documentSnapshot.exists()){
-        //                    String usuario = documentSnapshot.getString("marca");
-        //                    String contrasena = documentSnapshot.getString("ubicacion");
-        //                    System.out.println(usuario);
-        //                    System.out.println(contrasena);
-        //                }
-        //            }
-        //        }
-        //);
     }
 }
