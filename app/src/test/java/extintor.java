@@ -1,6 +1,7 @@
 import android.media.Image;
 
 public class extintor {
+
     private String marca;
     private String ubicacion;
     private Image qr;
@@ -18,6 +19,5 @@ public class extintor {
         this.mes = mes;
         this.ano = ano;
     }
-
 
 }
