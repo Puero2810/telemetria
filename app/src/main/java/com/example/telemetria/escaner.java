@@ -96,6 +96,7 @@ public class escaner extends AppCompatActivity {
                     map.put("mes_expiracion", mes);
                     map.put("dia_expiracion", dia);
                     map.put("capacidad", Integer.parseInt(e3.getText().toString()));
+                    map.put("porcentaje", 100);
                     map.put("aula", s4.getSelectedItem());
                     map.put("marca", e1.getText().toString());
                     db.collection("extintor").document(valor).set(map);

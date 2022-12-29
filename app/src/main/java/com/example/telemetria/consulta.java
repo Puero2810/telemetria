@@ -73,7 +73,7 @@ public class consulta extends AppCompatActivity {
                                 extintores.add(document.getId().toString());
                                 marca.add(document.getString("marca"));
                                 ubicacion.add(document.getString("aula"));
-                                porcentaje.add(document.getLong("capacidad"));
+                                porcentaje.add(document.getLong("porcentaje"));
                                 Log.d(TAG, document.getId() + " => " + document.getData());
                             }
                             ArrayAdapter <String> adapter = new ArrayAdapter<String>(consulta.this, R.layout.list_item2,extintores);
@@ -84,7 +84,7 @@ public class consulta extends AppCompatActivity {
                                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                                     datos.setText("El extintor " + listado_ext.getItemAtPosition(i) + " tiene los siguientes atributos:\n" + "marca: "
                                     + marca.get(i) + "\n" + "ubicacion: " + ubicacion.get(i)+"\n" +
-                                    "capacidad: " + porcentaje.get(i) + "\n");
+                                    "porcentaje: " + porcentaje.get(i) + "\n");
                                 }
                             });
                         } else {
