@@ -5,6 +5,7 @@ import static android.content.ContentValues.TAG;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -30,7 +31,7 @@ import java.util.List;
 
 public class consulta extends AppCompatActivity {
 
-    private TextView datos;
+    private TextView datos, logo;
     private ListView listado_ext;
     private Button salir;
 
@@ -40,12 +41,12 @@ public class consulta extends AppCompatActivity {
     ArrayList<String> marca;
     ArrayList<String> ubicacion;
     ArrayList<Long> porcentaje;
-    ArrayList<Timestamp> expiracion;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_consulta);
+        logo = (TextView)findViewById(R.id.text1);
         datos = (TextView)findViewById(R.id.tv1);
         listado_ext = (ListView)findViewById(R.id.lv1);
 
@@ -53,7 +54,6 @@ public class consulta extends AppCompatActivity {
         marca = new ArrayList<>();
         ubicacion = new ArrayList<>();
         porcentaje = new ArrayList<>();
-        expiracion = new ArrayList<>();
 
         salir = (Button) findViewById(R.id.exit);
 
@@ -70,16 +70,16 @@ public class consulta extends AppCompatActivity {
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                extintores.add(document.getId());
+                                extintores.add(document.getId().toString());
                                 marca.add(document.getString("marca"));
-                                ubicacion.add(document.getString("ubicacion"));
+                                ubicacion.add(document.getString("aula"));
                                 porcentaje.add(document.getLong("capacidad"));
-                                expiracion.add(document.getTimestamp("expiracion"));
                                 Log.d(TAG, document.getId() + " => " + document.getData());
                             }
-                            ArrayAdapter <String> adapter = new ArrayAdapter<String>(consulta.this, R.layout.list_item,extintores);
+                            ArrayAdapter <String> adapter = new ArrayAdapter<String>(consulta.this, R.layout.list_item2,extintores);
                             listado_ext.setAdapter(adapter);
                             listado_ext.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                @SuppressLint("SetTextI18n")
                                 @Override
                                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                                     datos.setText("El extintor " + listado_ext.getItemAtPosition(i) + " tiene los siguientes atributos:\n" + "marca: "
@@ -92,8 +92,5 @@ public class consulta extends AppCompatActivity {
                         }
                     }
                 });
-
-
     }
-
 }

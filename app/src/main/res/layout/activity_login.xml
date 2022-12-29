@@ -50,7 +50,7 @@
                     android:id="@+id/escaner"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Escanear codigo" />
+                    android:text="Ingresar extintor" />
 
                 <Button
                     android:id="@+id/ubicacion"

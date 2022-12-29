@@ -6,55 +6,50 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.media.Image;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.MediaStore;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.TextView;
+import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentReference;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 
-import java.io.File;
-import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import javax.xml.transform.Result;
-
 public class escaner extends AppCompatActivity {
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
+    DatePickerDialog.OnDateSetListener setListener;
+    private StorageReference sr;
+    private String valor;
     private EditText e1;
     private EditText e2;
     private EditText e3;
-    private Button e4;
-    private Button b1;
+    private Spinner s4;
+    private Button b5;
     private int ano;
     private int mes;
     private int dia;
-    private StorageReference sr;
-    DatePickerDialog.OnDateSetListener setListener;
 
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_escaner);
+        agregarDocument();
 
         e1 = (EditText) findViewById(R.id.edit_text_marca);
 
@@ -85,75 +80,65 @@ public class escaner extends AppCompatActivity {
 
         e3 = (EditText) findViewById(R.id.edit_text_capacidad);
 
-        e4 = (Button) findViewById(R.id.button_codigo);
-        e4.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onCamera();
-            }
-        });
+        s4 = (Spinner) findViewById(R.id.spinner_bloque);
+        agregarSpinnerBloque();
 
-        b1 = (Button) findViewById(R.id.agregar);
-        b1.setOnClickListener(new View.OnClickListener() {
+        b5 = (Button) findViewById(R.id.agregar);
+        b5.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(e1.getText().toString().equals("") || e2.getText().toString().equals("") || e3.getText().toString().equals("") || e4.getText().toString().equals("")){
+                if(e1.getText().toString().equals("") || e2.getText().toString().equals("") || e3.getText().toString().equals("")){
                     Toast.makeText(escaner.this, "Ingrese bien los datos", Toast.LENGTH_SHORT);
                 }
                 else{
                     Map<String, Object> map = new HashMap<>();
                     map.put("ano_expiracion", ano);
-                    map.put("capacidad", Integer.parseInt(e3.getText().toString()));
-                    map.put("dia_expiracion", dia);
-                    map.put("marca", e1.getText().toString());
                     map.put("mes_expiracion", mes);
-                    map.put("qr", "");
-                    map.put("ubicacion", "Laboratorio");
-                    FirebaseFirestore db = FirebaseFirestore.getInstance();
-                    db.collection("extintor").add(map).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                        @Override
-                        public void onSuccess(DocumentReference documentReference) {
-                            Toast.makeText(getApplicationContext(), "Extintor agregado", Toast.LENGTH_LONG);
-                            Intent intent= new Intent(escaner.this, login.class);
-                            startActivity(intent);
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(getApplicationContext(), "Error al ingresar", Toast.LENGTH_LONG);
-                        }
-                    });
+                    map.put("dia_expiracion", dia);
+                    map.put("capacidad", Integer.parseInt(e3.getText().toString()));
+                    map.put("aula", s4.getSelectedItem());
+                    map.put("marca", e1.getText().toString());
+                    db.collection("extintor").document(valor).set(map);
+                    Intent intent= new Intent(escaner.this, login.class);
+                    startActivity(intent);
                 }
             }
         });
     }
 
-    private void onCamera(){
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(intent, 2);
+    public void agregarDocument(){
+        db.collection("extintor").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if(task.isSuccessful()){
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        int numero = Integer.parseInt(document.getId());
+                        numero+=1;
+                        valor = String.valueOf(numero);
+                    }
+                }
+            }
+        });
     }
 
-    protected void onActivityResult(int requestCode, int resultCode, Intent data){
-        super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == 2 && resultCode == RESULT_OK){
-            Bundle extras = data.getExtras();
-            File directorio = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-            File imagen = null;
-            try {
-                imagen = File.createTempFile("data", ".jpg", directorio);
-            } catch (IOException e) {
-                e.printStackTrace();
+    public void agregarSpinnerBloque(){
+        db.collection("bloque").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if(task.isSuccessful()){
+                    List<String> dynamicList = new ArrayList<String>();
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        for(String clave:document.getData().keySet()){
+                            ArrayList<Object> valor = new ArrayList<>();
+                            valor = (ArrayList<Object>) document.getData().get(clave);
+                            for (Object obj: valor){
+                                dynamicList.add(document.getId()+clave+"-"+(String) obj);
+                            }
+                        }
+                    }
+                    s4.setAdapter(new ArrayAdapter<String>(escaner.this, android.R.layout.simple_spinner_dropdown_item, dynamicList));
+                }
             }
-
-            sr = FirebaseStorage.getInstance().getReference();
-            StorageReference fp = sr.child("gs://telemetria-75492.appspot.com");
-            System.out.println(imagen.toURI());
-//                @Override
-//                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-//                    System.out.println("imagen");
-//                }
-//            });
-
-        }
+        });
     }
 }
