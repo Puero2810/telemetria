@@ -103,4 +103,8 @@ public class MainActivity extends AppCompatActivity {
     static ArrayList<extintor> getExtintores(){
         return extintores;
     }
+
+    static void agregarExtintor(extintor ex){
+        extintores.add(ex);
+    }
 }

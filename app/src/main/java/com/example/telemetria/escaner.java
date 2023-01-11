@@ -103,6 +103,8 @@ public class escaner extends AppCompatActivity {
                     map.put("porcentaje", 100);
                     map.put("aula", s4.getSelectedItem());
                     map.put("marca", e1.getText().toString());
+                    extintor ex = new extintor(valor, (String) s4.getSelectedItem(), e1.getText().toString(), dia, mes, ano, Integer.parseInt(e3.getText().toString()), 100);
+                    main.agregarExtintor(ex);
                     db.collection("extintor").document(valor).set(map);
                     Intent intent= new Intent(escaner.this, login.class);
                     startActivity(intent);
