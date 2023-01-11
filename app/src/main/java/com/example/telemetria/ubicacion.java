@@ -1,21 +1,15 @@
 package com.example.telemetria;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ExpandableListView;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,7 +22,8 @@ public class ubicacion extends AppCompatActivity {
     private ExpandableListView listView;
     private ExpandableListAdapter listAdapter;
     private final List<String> listdataheader = new ArrayList<>();
-    private final HashMap<String,List<String>> listHashMap = new HashMap<>();
+    private final HashMap<String, List<String>> listHashMap = new HashMap<>();
+    MainActivity main = new MainActivity();
     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     @SuppressLint("MissingInflatedId")
@@ -36,70 +31,55 @@ public class ubicacion extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ubicacion);
-        listView=findViewById(R.id.explv);
-        boton = (Button)findViewById(R.id.exit);
 
-        new CountDownTimer(4000, 1000){
-            @Override
-            public void onTick(long l) {
-                initData();
-            }
+        //Lista
+        listView = findViewById(R.id.explv);
+        initData();
+        listAdapter = new ExpandableListAdapter(ubicacion.this, listdataheader, listHashMap);
+        listView.setAdapter(listAdapter);
 
-            @Override
-            public void onFinish() {
-                listAdapter=new ExpandableListAdapter(ubicacion.this,listdataheader,listHashMap);
-                listView.setAdapter(listAdapter);
-
-            }
-        }.start();
+        //Boton
+        boton = (Button) findViewById(R.id.exit);
     }
 
-    private void initData(){
+    private void initData() {
         agregarBloque();
         agregarAula();
     }
 
-    public void agregarBloque(){
-        db.collection("bloque").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if(task.isSuccessful()){
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        listdataheader.add(document.getId());
-                    }
-                    Set miConjunto = new HashSet<>(listdataheader);
-                    listdataheader.clear();
-                    listdataheader.addAll(miConjunto);
-
-                }
-            }
-        });
+    public void agregarBloque() {
+        for (extintor i : main.getExtintores()) {
+            String aula = i.getAula();
+            String[] separar = aula.split("-");
+            String parte0 = separar[0];
+            listdataheader.add(parte0);
+        }
+        Set conjuntoA = new HashSet<>(listdataheader);
+        listdataheader.clear();
+        listdataheader.addAll(conjuntoA);
     }
 
-    public void agregarAula(){
-        db.collection("bloque").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if(task.isSuccessful()){
-                    int i = 0;
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        List<String> ed= new ArrayList<>();
-                        for(String clave:document.getData().keySet()){
-                            ArrayList<Object> valor = (ArrayList<Object>) document.getData().get(clave);
-                            for (Object obj: valor){
-                                ed.add(clave+obj);
-                            }
-                        }
-                        listHashMap.put(listdataheader.get(i), ed);
-                        i++;
-                    }
+    public void agregarAula() {
+        for (String a : listdataheader) {
+            List<String> ed = new ArrayList<>();
+            for (extintor b : main.getExtintores()) {
+                String aula = b.getAula();
+                String[] separar = aula.split("-");
+                String parte0 = separar[0];
+                String parte1 = separar[1];
+                if (parte0.equals(a)) {
+                    ed.add(parte1);
                 }
             }
-        });
+            Set conjuntoA = new HashSet<>(ed);
+            ed.clear();
+            ed.addAll(conjuntoA);
+            listHashMap.put(a, ed);
+        }
     }
 
-    public void irMenuPrincipal(View v){
-        Intent intent= new Intent(ubicacion.this, login.class);
+    public void irMenuPrincipal(View v) {
+        Intent intent = new Intent(ubicacion.this, login.class);
         startActivity(intent);
     }
 }

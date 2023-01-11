@@ -7,12 +7,18 @@
     tools:context=".ubicacion">
 
     <LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:padding="8dp"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:orientation="vertical">
+
+        <ExpandableListView
+            android:id="@+id/explv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        </ExpandableListView>
 
         <Button
             android:id="@+id/salir"
@@ -21,13 +27,6 @@
             android:onClick="irMenuPrincipal"
             android:text="Salir"
             tools:ignore="OnClick" />
-
-        <ExpandableListView
-            android:id="@+id/explv"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-        </ExpandableListView>
 
 
     </LinearLayout>

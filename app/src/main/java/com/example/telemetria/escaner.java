@@ -1,6 +1,5 @@
 package com.example.telemetria;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
@@ -17,29 +16,22 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.storage.StorageReference;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class escaner extends AppCompatActivity {
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     DatePickerDialog.OnDateSetListener setListener;
-    private StorageReference sr;
     private String valor;
     private EditText e1;
     private EditText e2;
     private EditText e3;
     private Spinner s4;
     private Button b5;
+    private Button b6;
     private int ano;
     private int mes;
     private int dia;
@@ -49,10 +41,19 @@ public class escaner extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_escaner);
-        agregarDocument();
 
+        //Listas
+        MainActivity main = new MainActivity();
+        for(extintor i: main.getExtintores()){
+            int numero = Integer.parseInt(i.getId());
+            numero+=1;
+            valor = String.valueOf(numero);
+        }
+
+        //Marca
         e1 = (EditText) findViewById(R.id.edit_text_marca);
 
+        //Fecha
         e2 = (EditText) findViewById(R.id.edit_text_date);
         Calendar calendar = Calendar.getInstance();
         final int year = calendar.get(Calendar.YEAR);
@@ -78,17 +79,20 @@ public class escaner extends AppCompatActivity {
             }
         };
 
+        //Capacidad
         e3 = (EditText) findViewById(R.id.edit_text_capacidad);
 
+        //Bloque
         s4 = (Spinner) findViewById(R.id.spinner_bloque);
-        agregarSpinnerBloque();
+        s4.setAdapter(new ArrayAdapter<String>(escaner.this, android.R.layout.simple_spinner_dropdown_item, main.getLaboratorios()));
 
+        //Agregar
         b5 = (Button) findViewById(R.id.agregar);
         b5.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(e1.getText().toString().equals("") || e2.getText().toString().equals("") || e3.getText().toString().equals("")){
-                    Toast.makeText(escaner.this, "Ingrese bien los datos", Toast.LENGTH_SHORT);
+                    Toast.makeText(escaner.this, "Ingrese los datos correctamente", Toast.LENGTH_SHORT).show();
                 }
                 else{
                     Map<String, Object> map = new HashMap<>();
@@ -105,40 +109,14 @@ public class escaner extends AppCompatActivity {
                 }
             }
         });
-    }
 
-    public void agregarDocument(){
-        db.collection("extintor").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        //Atras
+        b6 = (Button) findViewById(R.id.atras);
+        b6.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if(task.isSuccessful()){
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        int numero = Integer.parseInt(document.getId());
-                        numero+=1;
-                        valor = String.valueOf(numero);
-                    }
-                }
-            }
-        });
-    }
-
-    public void agregarSpinnerBloque(){
-        db.collection("bloque").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if(task.isSuccessful()){
-                    List<String> dynamicList = new ArrayList<String>();
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        for(String clave:document.getData().keySet()){
-                            ArrayList<Object> valor = new ArrayList<>();
-                            valor = (ArrayList<Object>) document.getData().get(clave);
-                            for (Object obj: valor){
-                                dynamicList.add(document.getId()+clave+"-"+(String) obj);
-                            }
-                        }
-                    }
-                    s4.setAdapter(new ArrayAdapter<String>(escaner.this, android.R.layout.simple_spinner_dropdown_item, dynamicList));
-                }
+            public void onClick(View view) {
+                Intent intent= new Intent(escaner.this, login.class);
+                startActivity(intent);
             }
         });
     }
